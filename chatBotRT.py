@@ -162,6 +162,6 @@ class ChatBot:
         else:
             return self.convoController(output)
 
-# # print(orderDict)
+# print(orderDict)
 chatter = ChatBot()
 chatter.handleGreet()
