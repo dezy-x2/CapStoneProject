@@ -151,7 +151,10 @@ class ChatBot:
     def handleReply(self, reply):
         intent = self.determineIntent(reply)
         entity = self.determineEntity(reply)
-        print(intent.format(entity, self.oldDict[int(self.id_)][2]))
+        if intent == self.posResponses[0]:
+            print(intent.format(self.oldDict[int(self.id_)][1], self.oldDict[int(self.id_)][2]))
+        else:
+            print(intent.format(entity))
         output = input("Is there anything else I can help you with? \n> ")
         if self.continueConvo(output):
             return print(self.goodbyeMessage + self.name + ".")
