@@ -70,7 +70,7 @@ dayOfWeek = datetime.datetime.today().weekday() - 5
 
 class ChatBot:
     def __init__(self):
-        self.oldDict = {0: [1, 2, "Friday"]}
+        self.oldDict = {0: ["null", "order", "never"]}
         self.id_ = "0"
         self.name = ""
         self.negativeWords = ["go away", "leave", "nothing", "stop", "exit", "no", "bye", "good bye", "quit", "nope"]
@@ -86,6 +86,7 @@ class ChatBot:
             if word in prevCustomer.lower():
                 self.id_ = input("Awesome! What is it? \n> ")
                 self.oldDict = pickle.load(open("orders", "rb"))
+                self.name = self.oldDict[int(self.id_)][0]
                 # print(self.oldDict)
                 output = input(f"Ok, what can I do for you {self.oldDict[int(self.id_)][0]}? \n> ")
                 if self.continueConvo(output):
