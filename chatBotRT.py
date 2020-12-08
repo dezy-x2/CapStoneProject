@@ -73,9 +73,9 @@ class ChatBot:
         self.oldDict = {0: ["null", "order", "never"]}
         self.id_ = "0"
         self.name = ""
-        self.negativeWords = ["go away", "leave", "nothing", "stop", "exit", "no", "bye", "good bye", "quit", "nope"]
-        self.positiveWords = ["yes", "yea", "yeah", "yep", "correct",]
-        self.goodbyeMessage = "Sorry to see you go "
+        self.negativeWords = [" go away ", " leave ", " nothing ", " stop ", " exit ", " no ", " bye ", " good bye ", " quit ", " nope "]
+        self.positiveWords = [" yes ", " yea ", " yeah ", " yep ", " correct ", " ye ", " y "]
+        self.goodbyeMessage = "Sorry to see you go {}."
         self.posRoutes = {"order": [r'.*purchase.*', r'.*buy.*', r'.*get.*']}
         self.posResponses = ["Your order of {0} should be here by {1}.", "Our {0} sizes typically run large so I would order either your size or bigger.", "We have been selling {0} since 1999."]
         self.clothingBlank = "clothing"
@@ -86,20 +86,18 @@ class ChatBot:
             if word in prevCustomer.lower():
                 self.id_ = input("Awesome! What is it? \n> ")
                 self.oldDict = pickle.load(open("orders", "rb"))
-                self.name = self.oldDict[int(self.id_)][0]
-                # print(self.oldDict)
-                output = input(f"Ok, what can I do for you {self.oldDict[int(self.id_)][0]}? \n> ")
-                if self.continueConvo(output):
-                    return print(self.goodbyeMessage + self.name + ".")
-                else:
-                    return self.convoController(output)
+                try:
+                    self.name = self.oldDict[int(self.id_)][0]
+                    # print(self.oldDict)
+                    output = input(f"Ok, what can I do for you {self.oldDict[int(self.id_)][0]}? \n> ")
+                except KeyError:
+                    print("Sorry that customer ID doesn't exist please try again.")
+                    return
+                return self.continueConvo(output)
             else:
                 self.name = input("Hello there can I please have your name? \n> ")
                 output = input(f"Hello there {self.name} how may I help you today? \n> ")
-                if self.continueConvo(output):
-                    return print(self.goodbyeMessage + self.name + ".")
-                else:
-                    return self.convoController(output)
+                return self.continueConvo(output)
     
     def convoController(self, reply):
         for key, value, in self.posRoutes.items():
@@ -120,17 +118,11 @@ class ChatBot:
                 # print(orderDict)
                 print(f"Your order ID is {orderId}. It is important that you remember this as it is how you can access information about you order later.")
                 output2 = input(f"Is there anything else I can do for you {self.name}? \n> ")
-                if self.continueConvo(output2):
-                    return print(self.goodbyeMessage + self.name + ".")
-                else:
-                    return self.convoController(output2)
+                return self.continueConvo(output2)
             else:
                 print("Sorry, lets try that again.")
                 output3 = input(f"How can I help you {self.name}? \n> ")
-                if self.continueConvo(output3):
-                    return print(self.goodbyeMessage + self.name + ".")
-                else:
-                    return self.convoController(output3)
+                return self.continueConvo(output3)
 
     def determineIntent(self, reply):
         replyCounted = Counter(preproccess(reply))
@@ -146,8 +138,10 @@ class ChatBot:
     
     def continueConvo(self, reply):
         for word in self.negativeWords:
-            if word == reply.lower():
-                return True
+            if word in reply.lower():
+                return print(self.goodbyeMessage.format(self.name)) 
+
+        return self.convoController(reply)
     
     def handleReply(self, reply):
         intent = self.determineIntent(reply)
@@ -157,10 +151,7 @@ class ChatBot:
         else:
             print(intent.format(entity))
         output = input("Is there anything else I can help you with? \n> ")
-        if self.continueConvo(output):
-            return print(self.goodbyeMessage + self.name + ".")
-        else:
-            return self.convoController(output)
+        return self.continueConvo(output)
 
 # print(orderDict)
 chatter = ChatBot()
